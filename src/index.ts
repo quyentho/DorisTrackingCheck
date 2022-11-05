@@ -44,22 +44,32 @@ const exportCsv = (csv: string) => {
 const getData = async (trackingCodes: string[]) => {
   let result: deliveryCheckResult[] = [];
 
+  let requestPromises: Promise<Response>[] = [];
   for (const code of trackingCodes) {
-    const response = await fetch(url + code, {
-      method: "GET",
-      headers: {
-        "x-order-story-version": "v2",
-      },
-    });
-    const data: orderResponse = await response.json();
+    requestPromises.push(
+      fetch(url + code, {
+        method: "GET",
+        headers: {
+          "x-order-story-version": "v2",
+        },
+      })
+    );
+  }
+
+  const responses = await Promise.all(requestPromises);
+  const data: orderResponse[] = await Promise.all([
+    ...responses.map((res) => res.json()),
+  ]);
+  data.forEach((orderResponse) => {
     const orderHistory: orderStory[] = orderBy(
-      data.orderStory,
+      orderResponse.orderStory,
       ["date"],
       ["desc"]
     );
+
     result.push(
       ...orderHistory.map((h) => ({
-        trackingCode: code,
+        trackingCode: orderResponse.barcode,
         latestStatus: orderHistory[0].status,
         latestDate: new Date(orderHistory[0].date).toLocaleDateString(),
         orderDate: new Date(h.date).toLocaleDateString(),
@@ -68,7 +78,7 @@ const getData = async (trackingCodes: string[]) => {
         failAttempt: h.details?.attemptNumber ?? "",
       }))
     );
-  }
+  });
 
   return result;
 };
@@ -84,6 +94,7 @@ const clickHandler = async (e: Event) => {
 
   try {
     const data = await getData(trackingCodes);
+
     const csv = jsonToCsv(data);
 
     exportCsv(csv); // This will download the data file named "tracking.csv".

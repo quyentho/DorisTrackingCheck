@@ -1,5 +1,6 @@
 export interface orderResponse {
   // orderStatus: string;
+  barcode: string;
   orderStory: orderStory[];
 }
 export interface orderStory {
