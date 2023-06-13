@@ -7,5 +7,5 @@ services:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
       - ./dist:/usr/share/nginx/html
     ports:
-      - "8080:80"
-      - "8081:443"
+      - "80:80"
+      - "443:443"

@@ -7,15 +7,17 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "start": "webpack serve --mode development",
-    "build": "webpack"
+    "start": "concurrently \"webpack serve --mode development\" \"node nodejs/app.ts\"",
+    "build": "webpack",
+    "push": "scp -r dist/ pc@wesaam_host2:/home/pc"
   },
   "dependencies": {
     "@types/lodash": "^4.14.188",
     "axios": "^1.3.5",
     "axios-rate-limit": "^1.3.0",
     "bootstrap": "^5.2.2",
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.21",
+    "rxjs": "^7.8.1"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.13",
