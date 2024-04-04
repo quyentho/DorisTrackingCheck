@@ -9,7 +9,8 @@
   "scripts": {
     "start": "concurrently \"webpack serve --mode development\" \"node nodejs/app.ts\"",
     "build": "webpack",
-    "push": "scp -r dist/ pc@wesaam_host2:/home/pc"
+    "push": "scp -r dist/ pc@wesaam_host:/home/pc/wesaam_data/dist",
+    "push:js": "scp -r dist/*.js pc@wesaam_host:/home/pc/wesaam_data/dist"
   },
   "dependencies": {
     "@types/lodash": "^4.14.188",

@@ -50,7 +50,7 @@ export function exportCsv(csv: string) {
 const url =
   "https://apiv2.shipadelivery.com/7151BFA4-D6DB-66EE-FFFF-2579E2541200/E53D8B22-9B05-48D1-8C1C-D126EF68296F/services/whl/v2/my-packages/";
 
-const urlImile = "http://34.93.56.91/proxy?waybillNo=";
+const urlImile = "/proxy?waybillNo=";
 export const getDataIMile = async (trackingCodes: string[]) => {
   let result: deliveryCheckResult[] = [];
 
