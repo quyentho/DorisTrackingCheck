@@ -78,8 +78,6 @@ export const getDataIMile = async (trackingCodes: string[]) => {
       ["desc"]
     );
 
-    console.log("here", orderResponse.resultObject.waybillNo);
-
     result.push(
       ...sortedResponse.map((trackingInfo) => ({
         trackingCode: `${orderResponse.resultObject.waybillNo} `,
@@ -119,6 +117,7 @@ export const getData = async (trackingCodes: string[]) => {
   const data: orderResponse[] = await Promise.all([
     ...responses.map((res) => res.data),
   ]);
+
   data.forEach((orderResponse) => {
     const orderHistory: orderStory[] = orderBy(
       orderResponse.orderStory,
@@ -135,6 +134,11 @@ export const getData = async (trackingCodes: string[]) => {
         orderStatus: h.status,
         failReason: h.details?.failReason ?? "",
         failAttempt: h.details?.attemptNumber ?? "",
+        estimateArrivalTime: new Date(
+          orderResponse.dropOffEstimatedTime
+        ).toLocaleString("en-US", {
+          timeZone: "Asia/Ho_Chi_Minh",
+        }),
       }))
     );
   });

@@ -7,7 +7,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "start": "concurrently \"webpack serve --mode development\" \"node nodejs/app.ts\"",
+    "start": "webpack serve --mode development",
     "build": "webpack",
     "push": "scp -r dist/ pc@wesaam_host:/home/pc/wesaam_data/dist",
     "push:js": "scp -r dist/*.js pc@wesaam_host:/home/pc/wesaam_data/dist"
@@ -22,6 +22,7 @@
   },
   "devDependencies": {
     "autoprefixer": "^10.4.13",
+    "copy-webpack-plugin": "^12.0.2",
     "css-loader": "^6.7.1",
     "postcss-loader": "^7.0.1",
     "precss": "^4.0.0",

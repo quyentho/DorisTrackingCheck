@@ -2,6 +2,7 @@ export interface orderResponse {
   // orderStatus: string;
   barcode: string;
   orderStory: orderStory[];
+  dropOffEstimatedTime: number;
 }
 export interface orderStory {
   date: Date;
