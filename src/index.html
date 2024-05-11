@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Delivery Tracking Exporter</title>
+    <script src="./main.js" defer></script>
+
+    <link rel="manifest" href="/manifest.json" />
+  </head>
+  <body>
+    <div class="container">
+      <form class="m-auto w-50 mt-4" id="form">
+        <div class="form-group">
+          <label for="textbox">Input your tracking codes:</label>
+          <textarea class="form-control" id="textbox" rows="6"></textarea>
+          <div class="mt-2 d-flex justify-content-end gap-3">
+            <button id="btn-submit" type="submit" class="btn btn-success">
+              <div
+                class="spinner-border spinner-border-sm text-light"
+                role="status"
+                style="display: none"
+              >
+                <span class="visually-hidden">Loading...</span>
+              </div>
+              Export CSV
+            </button>
+
+            <button
+              id="btn-submit-imile"
+              type="submit"
+              class="btn btn-info ml-2"
+            >
+              <div
+                class="spinner-border spinner-border-sm text-light"
+                role="status"
+                style="display: none"
+              >
+                <span class="visually-hidden">Loading...</span>
+              </div>
+              Export FROM imile.com
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </body>
+</html>
