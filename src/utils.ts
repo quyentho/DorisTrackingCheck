@@ -125,20 +125,24 @@ export const getData = async (trackingCodes: string[]) => {
       ["desc"]
     );
 
+    const localeOptions = {
+      timeZone: "Asia/Ho_Chi_Minh",
+    };
     result.push(
       ...orderHistory.map((h) => ({
         trackingCode: orderResponse.barcode,
         latestStatus: orderHistory[0].status,
-        latestDate: new Date(orderHistory[0].date).toLocaleDateString(),
-        orderDate: new Date(h.date).toLocaleDateString(),
+        latestDate: new Date(orderHistory[0].date).toLocaleDateString(
+          "en-US",
+          localeOptions
+        ),
+        orderDate: new Date(h.date).toLocaleDateString("en-US", localeOptions),
         orderStatus: h.status,
         failReason: h.details?.failReason ?? "",
         failAttempt: h.details?.attemptNumber ?? "",
         estimateArrivalTime: new Date(
           orderResponse.dropOffEstimatedTime
-        ).toLocaleString("en-US", {
-          timeZone: "Asia/Ho_Chi_Minh",
-        }),
+        ).toLocaleDateString("en-US", localeOptions),
       }))
     );
   });
