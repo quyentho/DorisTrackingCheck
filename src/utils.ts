@@ -117,7 +117,6 @@ export const getData = async (trackingCodes: string[]) => {
   const data: orderResponse[] = await Promise.all([
     ...responses.map((res) => res.data),
   ]);
-
   data.forEach((orderResponse) => {
     const orderHistory: orderStory[] = orderBy(
       orderResponse.orderStory,
