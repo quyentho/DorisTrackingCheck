@@ -98,6 +98,19 @@ export const getDataIMile = async (trackingCodes: string[]) => {
   return result;
 };
 
+// this function will call endpoint and return a CSV file
+const urlNaqel = "https://delivery.kiemtradoanhthuwesaam.info/naqelcrawling";
+export const getDataNaqel = async (trackingCodes: string[]) => {
+  const body = JSON.stringify(trackingCodes);
+  return throttledAxios.post(urlNaqel, body, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    responseType: "blob",
+  });
+};
+
 export const getData = async (trackingCodes: string[]) => {
   let result: deliveryCheckResult[] = [];
 
