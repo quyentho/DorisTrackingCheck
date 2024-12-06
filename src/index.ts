@@ -1,19 +1,23 @@
 import "./styles.css";
-import { exportCsv, getData, jsonToCsv, getDataIMile } from "./utils";
+import {
+  exportCsv,
+  getData,
+  jsonToCsv,
+  getDataIMile,
+  getDataNaqel,
+} from "./utils";
 
 const textbox = document.getElementById("textbox")! as HTMLInputElement;
 const form = document.getElementById("form")!;
 const btnSubmit = document.getElementById("btn-submit")! as HTMLButtonElement;
-const btnSubmitImile = document.getElementById(
-  "btn-submit-imile"
-)! as HTMLButtonElement;
+const dropdown = document.getElementById("export-option")! as HTMLSelectElement;
+
 const spinners = document.getElementsByClassName(
   "spinner-border"
 )! as HTMLCollectionOf<HTMLElement>;
 
 function displaySpinners() {
   btnSubmit.disabled = true;
-  btnSubmitImile.disabled = true;
   Array.from(spinners).forEach((spinner) => {
     // Do stuff here
     spinner.style.display = "inline-block";
@@ -21,21 +25,11 @@ function displaySpinners() {
 }
 function hideSpinners() {
   btnSubmit.disabled = false;
-  btnSubmitImile.disabled = false;
   Array.from(spinners).forEach((spinner) => {
     spinner.style.display = "none";
   });
 }
-const clickHandler = async (e: Event) => {
-  e.preventDefault();
-
-  displaySpinners();
-
-  const trackingCodes = textbox.value
-    .split(/\r?\n/)
-    .map((v) => v.trim())
-    .filter(Boolean);
-
+const shipaHandler = async (trackingCodes: string[]) => {
   try {
     console.time("getData");
     const data = await getData(trackingCodes);
@@ -49,21 +43,11 @@ const clickHandler = async (e: Event) => {
   }
 
   btnSubmit.disabled = false;
-  hideSpinners();
 };
 
-const clickHandlerImile = async (e: Event) => {
-  // e.preventDefault();
-  displaySpinners();
-  const trackingCodes = textbox.value
-    .split(/\r?\n/)
-    .map((v) => v.trim())
-    .filter(Boolean);
-
+const imileHandler = async (trackingCodes: string[]) => {
   try {
-    console.time("getDataRxJs");
     const data = await getDataIMile(trackingCodes);
-    console.timeEnd("getDataRxJs");
 
     const csv = jsonToCsv(data);
 
@@ -71,12 +55,48 @@ const clickHandlerImile = async (e: Event) => {
   } catch (error) {
     console.error(error);
   }
-
-  hideSpinners();
 };
 
-btnSubmit.addEventListener("click", clickHandler);
-btnSubmitImile.addEventListener("click", clickHandlerImile);
+const handleSubmit = async (e: Event) => {
+  try {
+    displaySpinners();
+    const trackingCodes = getTrackingCodes();
+    switch (dropdown.value) {
+      case "shipa":
+        await shipaHandler(trackingCodes);
+        break;
+      case "imile":
+        await imileHandler(trackingCodes);
+        break;
+      case "naqel":
+        const response = await getDataNaqel(trackingCodes);
+        console.log("response", response);
+
+        const href = URL.createObjectURL(response.data);
+
+        // create "a" HTML element with href to file & click
+        const link = document.createElement("a");
+        link.href = href;
+        link.setAttribute("download", "tracking.csv");
+        document.body.appendChild(link);
+        link.click();
+
+        // clean up "a" element & remove ObjectURL
+        document.body.removeChild(link);
+        URL.revokeObjectURL(href);
+
+        break;
+      default:
+        break;
+    }
+  } catch (error) {
+    console.error(error);
+  } finally {
+    hideSpinners();
+  }
+};
+
+btnSubmit.addEventListener("click", handleSubmit);
 
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("./sw.js").then(function () {
@@ -85,3 +105,10 @@ if ("serviceWorker" in navigator) {
 }
 
 window.addEventListener("beforeinstallprompt", (e) => {});
+
+function getTrackingCodes() {
+  return textbox.value
+    .split(/\r?\n/)
+    .map((v) => v.trim())
+    .filter(Boolean);
+}
