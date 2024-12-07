@@ -5,6 +5,7 @@ import {
   jsonToCsv,
   getDataIMile,
   getDataNaqel,
+  getDataEu,
 } from "./utils";
 
 const textbox = document.getElementById("textbox")! as HTMLInputElement;
@@ -70,20 +71,10 @@ const handleSubmit = async (e: Event) => {
         break;
       case "naqel":
         const response = await getDataNaqel(trackingCodes);
-        console.log("response", response);
-
-        const href = URL.createObjectURL(response.data);
-
-        // create "a" HTML element with href to file & click
-        const link = document.createElement("a");
-        link.href = href;
-        link.setAttribute("download", "tracking.csv");
-        document.body.appendChild(link);
-        link.click();
-
-        // clean up "a" element & remove ObjectURL
-        document.body.removeChild(link);
-        URL.revokeObjectURL(href);
+        exportCsv(response.data);
+      case "eu":
+        const responseEu = await getDataEu(trackingCodes);
+        exportCsv(responseEu.data, "Chau au.csv");
 
         break;
       default:

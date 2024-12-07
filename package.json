@@ -9,8 +9,8 @@
   "scripts": {
     "start": "webpack serve --mode development",
     "build": "webpack",
-    "push": "scp -r dist/ pc@wesaam_host:/home/pc/wesaam_data/dist",
-    "push:js": "scp -r dist/*.js pc@wesaam_host:/home/pc/wesaam_data/dist"
+    "push": "scp -r dist/* pc@wesaam-host-1:/data/wesaam_data/dist",
+    "push:js": "scp -r dist/*.js pc@wesaam-host-1:/data/wesaam_data/dist"
   },
   "dependencies": {
     "@types/lodash": "^4.14.188",

@@ -37,12 +37,12 @@ export function jsonToCsv(deliveryCheckResults: deliveryCheckResult[]) {
   return csv.join("\r\n");
 }
 
-export function exportCsv(csv: string) {
+export function exportCsv(csv: string, filename: string = "tracking.csv") {
   const csvMIMEType = "data:text/csv;charset=utf-8,";
   var encodedUri = encodeURI(csvMIMEType + csv);
   var link = document.createElement("a");
   link.setAttribute("href", encodedUri);
-  link.setAttribute("download", "tracking.csv");
+  link.setAttribute("download", filename);
   document.body.appendChild(link); // Required for FF
   link.click();
 }
@@ -108,6 +108,17 @@ export const getDataNaqel = async (trackingCodes: string[]) => {
       "Content-Type": "application/json",
     },
     responseType: "blob",
+  });
+};
+
+const urlEu = "https://delivery.kiemtradoanhthuwesaam.info/eu/track";
+export const getDataEu = async (trackingCodes: string[]) => {
+  const body = JSON.stringify(trackingCodes);
+  return throttledAxios.post(urlEu, body, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
   });
 };
 
