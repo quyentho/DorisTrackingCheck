@@ -36,15 +36,18 @@ export function jsonToCsv(deliveryCheckResults: deliveryCheckResult[]) {
   }
   return csv.join("\r\n");
 }
-
 export function exportCsv(csv: string, filename: string = "tracking.csv") {
-  const csvMIMEType = "data:text/csv;charset=utf-8,";
-  var encodedUri = encodeURI(csvMIMEType + csv);
-  var link = document.createElement("a");
-  link.setAttribute("href", encodedUri);
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  const link = document.createElement("a");
+  const url = URL.createObjectURL(blob);
+
+  link.setAttribute("href", url);
   link.setAttribute("download", filename);
-  document.body.appendChild(link); // Required for FF
+  link.style.visibility = "hidden";
+
+  document.body.appendChild(link);
   link.click();
+  document.body.removeChild(link);
 }
 
 const url =
@@ -111,7 +114,7 @@ export const getDataNaqel = async (trackingCodes: string[]) => {
   });
 };
 
-const urlEu = "https://delivery.kiemtradoanhthuwesaam.info/eu/track";
+const urlEu = "http://localhost:8888/track";
 export const getDataEu = async (trackingCodes: string[]) => {
   const body = JSON.stringify(trackingCodes);
   return throttledAxios.post(urlEu, body, {
