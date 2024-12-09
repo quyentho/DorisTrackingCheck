@@ -114,7 +114,7 @@ export const getDataNaqel = async (trackingCodes: string[]) => {
   });
 };
 
-const urlEu = "http://localhost:8888/track";
+const urlEu = "https://delivery.kiemtradoanhthuwesaam.info/eu/track";
 export const getDataEu = async (trackingCodes: string[]) => {
   const body = JSON.stringify(trackingCodes);
   return throttledAxios.post(urlEu, body, {
