@@ -7,6 +7,7 @@ import {
   getDataNaqel,
   getDataEu,
 } from "./utils";
+import { BOXLEO_API_URL } from "./config";
 
 const textbox = document.getElementById("textbox")! as HTMLInputElement;
 const form = document.getElementById("form")!;
@@ -58,6 +59,40 @@ const imileHandler = async (trackingCodes: string[]) => {
   }
 };
 
+const boxleoHandler = async (trackingCodes: string[]) => {
+  try {
+    // Join tracking codes with comma for filter parameter
+    const filter = trackingCodes.length > 0 ? trackingCodes.join(",") : "";
+
+    // Call our backend proxy CSV endpoint
+    // In development: goes directly to localhost:5028
+    // In production: uses relative path through nginx
+    let url = `${BOXLEO_API_URL}/api/boxleo/orders/csv?page=1&per_page=5000&orders_type=leads&is_marketplace=all`;
+
+    if (filter) {
+      url += `&filter=${encodeURIComponent(filter)}`;
+    }
+
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        accept: "text/csv",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Boxleo request failed with status ${response.status}`);
+    }
+
+    const csvText = await response.text();
+    exportCsv(csvText, "boxleo-orders.csv");
+  } catch (error) {
+    console.error(error);
+    alert(
+      "Failed to fetch Boxleo orders. Make sure the BoxleoProxy server is running."
+    );
+  }
+};
 const handleSubmit = async (e: Event) => {
   try {
     displaySpinners();
@@ -72,10 +107,14 @@ const handleSubmit = async (e: Event) => {
       case "naqel":
         const response = await getDataNaqel(trackingCodes);
         exportCsv(response.data);
+        break;
       case "eu":
         const responseEu = await getDataEu(trackingCodes);
         exportCsv(responseEu.data, "Chau au.csv");
 
+        break;
+      case "boxleo":
+        await boxleoHandler(trackingCodes);
         break;
       default:
         break;

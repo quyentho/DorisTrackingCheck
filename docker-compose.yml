@@ -9,3 +9,15 @@ services:
     ports:
       - "80:80"
       - "443:443"
+    depends_on:
+      - boxleo_proxy
+
+  boxleo_proxy:
+    build:
+      context: ./BoxleoProxy
+      dockerfile: Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:80
+    expose:
+      - "80"
