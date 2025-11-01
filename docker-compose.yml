@@ -19,5 +19,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://+:80
+      - Boxleo__Email=your-email.com
+      - Boxleo__Password=your-password
     expose:
       - "80"
