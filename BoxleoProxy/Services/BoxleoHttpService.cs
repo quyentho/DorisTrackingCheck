@@ -65,16 +65,7 @@ public class BoxleoHttpService : IBoxleoHttpService
 
         if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
-            _logger.LogWarning("Token expired, refreshing and retrying");
-            await RefreshTokenAsync();
-            token = await GetTokenAsync();
-
-            request = new HttpRequestMessage(HttpMethod.Get, url);
-            request.Headers.Add("Accept", "application/json, text/plain, */*");
-            request.Headers.Add("Accept-Language", "en-US,en;q=0.7");
-            request.Headers.Add("Authorization", $"Bearer {token}");
-            request.Headers.Add("x-selected-country", JsonSerializer.Serialize(selectedCountry));
-            request.Headers.Add("x-selected-warehouse", "null");
+            await HandleTokenExpired(request);
 
             response = await _httpClient.SendAsync(request);
         }
@@ -105,10 +96,7 @@ public class BoxleoHttpService : IBoxleoHttpService
 
             if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
             {
-                await RefreshTokenAsync();
-                token = await GetTokenAsync();
-                request.Headers.Remove("Authorization");
-                request.Headers.Add("Authorization", $"Bearer {token}");
+                await HandleTokenExpired(request);
                 response = await _httpClient.SendAsync(request);
             }
 
@@ -142,6 +130,15 @@ public class BoxleoHttpService : IBoxleoHttpService
             _logger.LogError(ex, "Error fetching cancellation reasons");
             return new Dictionary<int, string>();
         }
+    }
+
+    private async Task HandleTokenExpired(HttpRequestMessage request)
+    {
+        _logger.LogWarning("Token expired, refreshing and retrying");
+        await RefreshTokenAsync();
+        var token = await GetTokenAsync();
+        request.Headers.Remove("Authorization");
+        request.Headers.Add("Authorization", $"Bearer {token}");
     }
 
     private string BuildOrdersUrl(int page, int per_page, string orders_type, string is_marketplace, string? filter)
