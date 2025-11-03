@@ -7,8 +7,12 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
-builder.Services.AddHttpClient();
-builder.Services.AddSingleton<IBoxleoAuthService, BoxleoAuthService>();
+builder.Services.AddHttpClient<IBoxleoHttpService, BoxleoHttpService>(client =>
+{
+    var baseUrl = builder.Configuration["Boxleo:BaseUrl"] ?? "https://boxleo-backend-nml82.ondigitalocean.app";
+    client.BaseAddress = new Uri(baseUrl);
+});
+builder.Services.AddMemoryCache();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
